@@ -1,7 +1,7 @@
+import json
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from.models import Pokemon
-import json
 
 
 class ApiPokemon(APIView):
@@ -14,24 +14,21 @@ class ApiPokemon(APIView):
             pokemon = pokemon.__dict__
             del (pokemon['_state'])
             evolutions_list = pokemon['evolutions'].split(', ')
-            print(evolutions_list)
-            evolutions = Pokemon.objects.filter(name__in=pokemon['evolutions'].split(', '))
-            print(evolutions)
+            evolutions = Pokemon.objects.filter(name__in=evolutions_list)
             pokemon['evolutions'] = [
-            {
-                'name': evolution.name,
-                'type': 'evolution',
-                'id': evolution.id,
-            } for evolution in evolutions
+                {
+                    'name': evolution.name,
+                    'evolutionType': 'evolution',
+                    'id': evolution.id,
+                } for evolution in evolutions
             ]
-            print(pokemon['evolutions'])
             if pre_evolution:
                 pokemon['evolutions'].append(
-                {
-                    'name': pre_evolution[0].name,
-                    'type': 'pre-evolution',
-                    'id': pre_evolution[0].id,
-                }
+                    {
+                        'name': pre_evolution[0].name,
+                        'evolutionType': 'pre-evolution',
+                        'id': pre_evolution[0].id,
+                    }
                 )
             return HttpResponse(json.dumps(pokemon), content_type='application/json')
 
