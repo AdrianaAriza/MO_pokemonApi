@@ -23,6 +23,7 @@ class ApiPokemon(APIView):
                     'name': evolution.name,
                     'evolutionType': 'evolution',
                     'id': evolution.id,
+                    'image': evolution.image,
                 } for evolution in evolutions
             ]
             if pre_evolution:
@@ -31,6 +32,7 @@ class ApiPokemon(APIView):
                         'name': pre_evolution[0].name,
                         'evolutionType': 'pre-evolution',
                         'id': pre_evolution[0].id,
+                        'image': pre_evolution[0].image,
                     }
                 )
             return HttpResponse(json.dumps(pokemon), content_type='application/json')
