@@ -38,7 +38,8 @@ class Command(BaseCommand):
             base_stats = self.get_base_stats(re['stats'])
             data = {'name': name, 'height': re['height'], 'weight': re['weight'], 'id': re['id'],
                     'evolutions': evolutions, 'base_stats': json.dumps(base_stats),
-                    'image': re['sprites']['other']['dream_world']['front_default']}
+                    'image': re['sprites']['other']['dream_world']['front_default'] if re['sprites']['other']['dream_world']['front_default']
+                    else re['sprites']['front_default']}
             # save Pokemon in db
             Pokemon.objects.update_or_create(id=data['id'], name=data['name'], defaults=data)
 
