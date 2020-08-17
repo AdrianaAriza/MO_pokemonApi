@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+    <img src="{{ pokemon.image }}">
+    <h3> {{ pokemon.base_stats }}</h3>
+    {% for k, v in pokemon.base_stats.items %}
+        <h3> {{ k }} : {{ v }}</h3>
+    {% endfor %}
+</body>
+</html>
