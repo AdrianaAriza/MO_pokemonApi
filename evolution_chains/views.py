@@ -10,10 +10,13 @@ class ApiPokemon(APIView):
         try:
             pokemon = Pokemon.objects.get(name=name)
             pokemon.base_stats = json.loads(pokemon.base_stats)
-            pre_evolution = Pokemon.objects.filter(evolutions=name)
+            pre_evolution = Pokemon.objects.filter(evolutions__contains=name)
             pokemon = pokemon.__dict__
             del (pokemon['_state'])
-            evolutions_list = pokemon['evolutions'].split(', ')
+            if pokemon['evolutions']:
+                evolutions_list = pokemon['evolutions'].split(', ')
+            else:
+                evolutions_list = []
             evolutions = Pokemon.objects.filter(name__in=evolutions_list)
             pokemon['evolutions'] = [
                 {
