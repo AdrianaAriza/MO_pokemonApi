@@ -68,3 +68,13 @@ body {
   text-align: center;
   vertical-align: middle;
 }
+
+.pokemon-desc{
+  width: 45%;
+  padding: 5%;
+}
+
+.pokemon-cont{
+  padding-left: 35%;
+  display: flex;
+}

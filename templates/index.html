@@ -33,54 +33,87 @@
     </div>
   </section>
   <script>
-      var button = document.getElementById("search-button");
-button = addEventListener("click", function (e) {
-  e.preventDefault;
-  var name = document.getElementById("search-input").value;
-  getResults(name);
-});
+    var button = document.getElementById("search-button");
+    button.onclick = function (e) {
+      e.preventDefault;
+      var name = document.getElementById("search-input").value;
+      getResults(name);
+    };
 
-function getResults(name) {
-  fetch("https://mopokemonapi.herokuapp.com/api/" + name)
-    .then((response) => {
-      return response.json();
-    })
-    .then((json) => {
-      console.log(json);
-      let imgHTML = "";
-      let evolutionHTML = "";
-      let pevolutionHTML = "";
-      let notFoundHTML = "";
-      const resultsEl = document.getElementById("trend-results");
-      const preevolutions = document.getElementById("pre-evolution");
-      const evolution = document.getElementById("evolution");
 
-      if (json.name == "pokemon not found") {
-        notFoundHTML += `
-        <h1>
-          POKEMON NOT FOUND
-        </h1>`;
-        resultsEl.innerHTML = notFoundHTML;
-        preevolutions.innerHTML = "";
-        evolution.innerHTML = "";
-      } else {
-        var evolutionsList = [];
-        var pevolutionList = [];
-        json.evolutions.forEach((evolution) => {
-          if (evolution.evolutionType == "evolution") {
-            evolutionsList.push(evolution);
+    function getResults(name) {
+      fetch("https://mopokemonapi.herokuapp.com/api/" + name)
+        .then((response) => {
+          return response.json();
+        })
+        .then((json) => {
+          console.log(json);
+          let imgHTML = "";
+          let evolutionHTML = "";
+          let pevolutionHTML = "";
+          let notFoundHTML = "";
+          const resultsEl = document.getElementById("trend-results");
+          const preevolutions = document.getElementById("pre-evolution");
+          const evolution = document.getElementById("evolution");
+
+          if (json.name == "pokemon not found") {
+            notFoundHTML += `
+              <h1>
+                POKEMON NOT FOUND
+              </h1>
+              <form>
+                  <input type="text" placeholder="Enter family tree number" id="family-input">
+                  <input type="button" value="enviar" id="family-button">
+              </form>`;
+            resultsEl.innerHTML = notFoundHTML;
+            preevolutions.innerHTML = "";
+            evolution.innerHTML = "";
+            var button_family = document.getElementById("family-button");
+            button_family.onclick = function (e) {
+              e.preventDefault;
+              var id = document.getElementById("family-input").value;
+              getFamily(id);
+            };
+            function getFamily(id) {
+              console.log(id);
+              fetch("https://mopokemonapi.herokuapp.com/create-family/" + id)
+                .then((response) => {
+                  return (response.json());
+                })
+                .then((json) => {
+                  alert(json.status);
+                })
+            }
           } else {
-            pevolutionList.push(evolution);
-          }
-        });
-        imgHTML += `<img src = "${json.image}" class = "item" width = "20%" height = "20%">
+            var evolutionsList = [];
+            var pevolutionList = [];
+            json.evolutions.forEach((evolution) => {
+              if (evolution.evolutionType == "evolution") {
+                evolutionsList.push(evolution);
+              } else {
+                pevolutionList.push(evolution);
+              }
+            });
+            imgHTML += `
+            <div class="pokemon-cont">
+                <img src = "${json.image}" width = "30%" height = "30%">
+                <div class="pokemon-desc">
                   <p>NAME: ${json.name}</p>
                   <p>ID: ${json.id}</p>
                   <p>HEIGHT: ${json.height}</p>
-                  <p>WEIGHT: ${json.weight}</p>`;
-        resultsEl.innerHTML = imgHTML;
-        evolutionsList.forEach((evolution) => {
-          evolutionHTML += `
+                  <p>WEIGHT: ${json.weight}</p>
+                  <p>HP: ${json.base_stats.hp}</p>
+                  <p>ATTACK: ${json.base_stats.attack}</p>
+                  <p>DEFENSE: ${json.base_stats.defense}</p>
+                  <p>SPEED: ${json.base_stats.speed}</p>
+                  <p>SPECIAL DEFENSE: ${json.base_stats["special-defense"]}</p>
+                  <p>SPECIAL ATTACK: ${json.base_stats["special-attack"]}</p>
+                </div>
+              </div>
+                  `;
+            resultsEl.innerHTML = imgHTML;
+            evolutionsList.forEach((evolution) => {
+              evolutionHTML += `
         <div class="pokemon">
           <div class="pokemon-characteristics">
             <img src = "${evolution.image}" class = "item" width = "100px" height = "100px">
@@ -90,10 +123,10 @@ function getResults(name) {
             <p>ID: ${evolution.id}</p>
           </div>
         </div>`;
-        });
-        evolution.innerHTML = evolutionHTML;
-        pevolutionList.forEach((evolution) => {
-          pevolutionHTML += `<div class="pokemon">
+            });
+            evolution.innerHTML = evolutionHTML;
+            pevolutionList.forEach((evolution) => {
+              pevolutionHTML += `<div class="pokemon">
           <div class="pokemon-characteristics">
             <img src = "${evolution.image}" class = "item" width = "100px" height = "100px">
           </div>
@@ -102,11 +135,11 @@ function getResults(name) {
             <p>ID: ${evolution.id}</p>
           </div>
         </div>`;
+            });
+            preevolutions.innerHTML = pevolutionHTML;
+          }
         });
-        preevolutions.innerHTML = pevolutionHTML;
-      }
-    });
-}
+    }
   </script>
 </body>
 

@@ -1,15 +1,19 @@
 import json
+import os
+
 from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.views import APIView
 from.models import Pokemon
 
+class Index (APIView):
+    def get(self, request):
+        return render(request, 'index.html')
 
 class ApiPokemon(APIView):
-
     def get(self, request, name):
         try:
-            pokemon = Pokemon.objects.get(name=name)
+            pokemon = Pokemon.objects.get(name=name.lower())
             pokemon.base_stats = json.loads(pokemon.base_stats)
             pre_evolution = Pokemon.objects.filter(evolutions__contains=name)
             pokemon = pokemon.__dict__
@@ -41,6 +45,8 @@ class ApiPokemon(APIView):
         except Pokemon.DoesNotExist:
             return HttpResponse(json.dumps({"name": "pokemon not found"}), content_type='application/json')
 
-class Index (APIView):
-    def get(self, request):
-        return render(request, 'index.html')
+class CreateFamily(APIView):
+    def get(self, request, id):
+        os.system(f'python manage.py evolution_chains {id}')
+        return HttpResponse(json.dumps({"status": "family tree created"}), content_type='application/json')
+
