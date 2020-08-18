@@ -1,15 +1,113 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
 
+<head>
+  <title>POKEDEX</title>
+  <meta charset="utf-8" />
+  <meta name="description" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}" />
 </head>
+
 <body>
-    <img src="{{ pokemon.image }}">
-    <h3> {{ pokemon.base_stats }}</h3>
-    {% for k, v in pokemon.base_stats.items %}
-        <h3> {{ k }} : {{ v }}</h3>
-    {% endfor %}
+  <h1 class="title">POKEDEX</h1>
+  <section id="search">
+    <div id="main-search">
+      <form action="">
+        <input type="text" placeholder="Enter the name of your pokemon" id="search-input">
+        <input type="button" value="enviar" id="search-button">
+      </form>
+    </div>
+    <div class="results-container" id="trend-results">
+    </div>
+    <div class="evolutions" id="evolutions">
+      <div class="p-evolutions">
+        <h3>PRE-EVOLUTION(S)</h3>
+        <div id="pre-evolution"></div>
+      </div>
+      <div class="p-evolutions">
+        <h3>EVOLUTION(S)</h3>
+        <div id="evolution"></div>
+      </div>
+    </div>
+  </section>
+  <script>
+      var button = document.getElementById("search-button");
+button = addEventListener("click", function (e) {
+  e.preventDefault;
+  var name = document.getElementById("search-input").value;
+  getResults(name);
+});
+
+function getResults(name) {
+  fetch("https://mopokemonapi.herokuapp.com/api/" + name)
+    .then((response) => {
+      return response.json();
+    })
+    .then((json) => {
+      console.log(json);
+      let imgHTML = "";
+      let evolutionHTML = "";
+      let pevolutionHTML = "";
+      let notFoundHTML = "";
+      const resultsEl = document.getElementById("trend-results");
+      const preevolutions = document.getElementById("pre-evolution");
+      const evolution = document.getElementById("evolution");
+
+      if (json.name == "pokemon not found") {
+        notFoundHTML += `
+        <h1>
+          POKEMON NOT FOUND
+        </h1>`;
+        resultsEl.innerHTML = notFoundHTML;
+        preevolutions.innerHTML = "";
+        evolution.innerHTML = "";
+      } else {
+        var evolutionsList = [];
+        var pevolutionList = [];
+        json.evolutions.forEach((evolution) => {
+          if (evolution.evolutionType == "evolution") {
+            evolutionsList.push(evolution);
+          } else {
+            pevolutionList.push(evolution);
+          }
+        });
+        imgHTML += `<img src = "${json.image}" class = "item" width = "20%" height = "20%">
+                  <p>NAME: ${json.name}</p>
+                  <p>ID: ${json.id}</p>
+                  <p>HEIGHT: ${json.height}</p>
+                  <p>WEIGHT: ${json.weight}</p>`;
+        resultsEl.innerHTML = imgHTML;
+        evolutionsList.forEach((evolution) => {
+          evolutionHTML += `
+        <div class="pokemon">
+          <div class="pokemon-characteristics">
+            <img src = "${evolution.image}" class = "item" width = "100px" height = "100px">
+          </div>
+          <div class="pokemon-characteristics">
+            <p>NAME: ${evolution.name}</p>
+            <p>ID: ${evolution.id}</p>
+          </div>
+        </div>`;
+        });
+        evolution.innerHTML = evolutionHTML;
+        pevolutionList.forEach((evolution) => {
+          pevolutionHTML += `<div class="pokemon">
+          <div class="pokemon-characteristics">
+            <img src = "${evolution.image}" class = "item" width = "100px" height = "100px">
+          </div>
+          <div class="pokemon-characteristics">
+            <p>NAME: ${evolution.name}</p>
+            <p>ID: ${evolution.id}</p>
+          </div>
+        </div>`;
+        });
+        preevolutions.innerHTML = pevolutionHTML;
+      }
+    });
+}
+  </script>
 </body>
+
 </html>

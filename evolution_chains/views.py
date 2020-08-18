@@ -1,5 +1,6 @@
 import json
 from django.http import HttpResponse
+from django.shortcuts import render
 from rest_framework.views import APIView
 from.models import Pokemon
 
@@ -40,3 +41,6 @@ class ApiPokemon(APIView):
         except Pokemon.DoesNotExist:
             return HttpResponse(json.dumps({"name": "pokemon not found"}), content_type='application/json')
 
+class Index (APIView):
+    def get(self, request):
+        return render(request, 'index.html')
