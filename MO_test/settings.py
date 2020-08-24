@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'MO_test.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-"""
+
 # Local Database
 DATABASES = {
     'default': {
@@ -98,7 +98,7 @@ DATABASES = {
         default=config('DATABASE_URL')
     )
 }
-
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
